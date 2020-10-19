@@ -79,7 +79,9 @@ rule map_genome_pe_1_2:
     output:
         bam='{output_dir}/bam/{sample_id}/genome.bam',
         log='{output_dir}/mapping_star/{sample_id}/genome_1st/Log.final.out',
-        sjdbFileChrStartEnd='{output_dir}/mapping_star/{sample_id}/genome_1st/SJ.out.tab'
+        unmapped1='{output_dir}/unmapped/{sample_id}/genome_1.fastq.gz',
+        unmapped2='{output_dir}/unmapped/{sample_id}/genome_2.fastq.gz',
+        # sjdbFileChrStartEnd='{output_dir}/mapping_star/{sample_id}/genome_1st/SJ.out.tab'
     params:
         output_prefix='{output_dir}/mapping_star/{sample_id}/genome_1st/',
         index=config.get("genome_dir") + '/long_index/star',
@@ -98,59 +100,64 @@ rule map_genome_pe_1_2:
                 --runThreadN {threads} \
                 --outFileNamePrefix {params.output_prefix} \
                 --outSAMtype BAM Unsorted \
-                --readFilesCommand pigz -p {threads} -d -c \
-                --outSAMmultNmax 1 \
-                --seedPerWindowNmax {params.seedPerWindowNmax} \
-            && mv {params.output_prefix}Aligned.out.bam {output.bam} \
-            && cp {output.log} {log}
-        '''
-
-rule map_genome_pe_2_2:
-    input:
-        reads1='{output_dir}/unmapped/{sample_id}/rRNA_1.fastq.gz',
-        reads2='{output_dir}/unmapped/{sample_id}/rRNA_2.fastq.gz',
-        sjdbFileChrStartEnd=expand('{output_dir}/mapping_star/{sample_id}/genome_1st/SJ.out.tab',output_dir=config.get("output_dir"),sample_id=sample_ids)
-    output:
-        unmapped1='{output_dir}/unmapped/{sample_id}/genome_1.fastq.gz',
-        unmapped2='{output_dir}/unmapped/{sample_id}/genome_2.fastq.gz',
-        log='{output_dir}/mapping_star/{sample_id}/genome/Log.final.out'
-    params:
-        output_prefix='{output_dir}/mapping_star/{sample_id}/genome/',
-        index=config.get("genome_dir") + '/long_index/star',
-        seedPerWindowNmax=50
-    threads:
-        workflow.cores * 0.75
-    # resources:
-    #     mem_mb=46080
-    conda:
-        "../../envs/star2_5_3a.yaml"
-    log:
-        '{output_dir}/log/mapping/genome_2nd/{sample_id}.log'
-    shell:
-        ''' STAR --genomeDir {params.index} \
-                --readFilesIn {input.reads1} {input.reads2} \
-                --runThreadN {threads} \
-                --outFileNamePrefix {params.output_prefix} \
-                --outSAMtype BAM Unsorted \
                 --outReadsUnmapped Fastx \
                 --readFilesCommand pigz -p {threads} -d -c \
                 --outSAMmultNmax 1 \
-                --sjdbFileChrStartEnd {input.sjdbFileChrStartEnd} \
-                --seedPerWindowNmax {params.seedPerWindowNmax} \
                 \
-                --chimSegmentMin 12 \
-                --chimJunctionOverhangMin 12 \
-                --alignSJDBoverhangMin 10 \
-                --alignMatesGapMax 100000 \
-                --alignIntronMax 100000 \
-                --alignSJstitchMismatchNmax 5 -1 5 5 \
-                --outSAMattrRGline ID:GRPundef \
-                --chimScoreJunctionNonGTAG -4 \
-                --limitSjdbInsertNsj=5000000 \
+                --seedPerWindowNmax {params.seedPerWindowNmax} \
+            && mv {params.output_prefix}Aligned.out.bam {output.bam} \
+            && cp {output.log} {log} \
             && pigz -p {threads} -c {params.output_prefix}Unmapped.out.mate1 > {output.unmapped1} \
             && pigz -p {threads} -c {params.output_prefix}Unmapped.out.mate2 > {output.unmapped2} \
             && rm -f {params.output_prefix}Unmapped.out.mate1 {params.output_prefix}Unmapped.out.mate2
         '''
+        # --sjdbFileChrStartEnd {input.sjdbFileChrStartEnd} \
+
+# rule map_genome_pe_2_2:
+#     input:
+#         reads1='{output_dir}/unmapped/{sample_id}/rRNA_1.fastq.gz',
+#         reads2='{output_dir}/unmapped/{sample_id}/rRNA_2.fastq.gz',
+#         # sjdbFileChrStartEnd=expand('{output_dir}/mapping_star/{sample_id}/genome_1st/SJ.out.tab',output_dir=config.get("output_dir"),sample_id=sample_ids)
+#         sjdbFileChrStartEnd='{output_dir}/mapping_star/{sample_id}/genome_1st/SJ.out.tab',
+#     output:
+#         unmapped1='{output_dir}/unmapped/{sample_id}/genome_1.fastq.gz',
+#         unmapped2='{output_dir}/unmapped/{sample_id}/genome_2.fastq.gz',
+#         log='{output_dir}/mapping_star/{sample_id}/genome/Log.final.out'
+#     params:
+#         output_prefix='{output_dir}/mapping_star/{sample_id}/genome/',
+#         index=config.get("genome_dir") + '/long_index/star',
+#         seedPerWindowNmax=50
+#     threads:
+#         workflow.cores * 0.75
+#     conda:
+#         "../../envs/star2_5_3a.yaml"
+#     log:
+#         '{output_dir}/log/mapping/genome_2nd/{sample_id}.log'
+#     shell:
+#         ''' STAR --genomeDir {params.index} \
+#                 --readFilesIn {input.reads1} {input.reads2} \
+#                 --runThreadN {threads} \
+#                 --outFileNamePrefix {params.output_prefix} \
+#                 --outSAMtype BAM Unsorted \
+#                 --outReadsUnmapped Fastx \
+#                 --readFilesCommand pigz -p {threads} -d -c \
+#                 --outSAMmultNmax 1 \
+#                 --sjdbFileChrStartEnd {input.sjdbFileChrStartEnd} \
+#                 --seedPerWindowNmax {params.seedPerWindowNmax} \
+#                 \
+#                 --chimSegmentMin 12 \
+#                 --chimJunctionOverhangMin 12 \
+#                 --alignSJDBoverhangMin 10 \
+#                 --alignMatesGapMax 100000 \
+#                 --alignIntronMax 100000 \
+#                 --alignSJstitchMismatchNmax 5 -1 5 5 \
+#                 --outSAMattrRGline ID:GRPundef \
+#                 --chimScoreJunctionNonGTAG -4 \
+#                 --limitSjdbInsertNsj=5000000 \
+#             && pigz -p {threads} -c {params.output_prefix}Unmapped.out.mate1 > {output.unmapped1} \
+#             && pigz -p {threads} -c {params.output_prefix}Unmapped.out.mate2 > {output.unmapped2} \
+#             && rm -f {params.output_prefix}Unmapped.out.mate1 {params.output_prefix}Unmapped.out.mate2
+#         '''
 
 rule map_circRNA_pe:
     input:
@@ -335,32 +342,32 @@ rule summarize_insert_size:
         matrix.index.name = 'insert_size'
         matrix.to_csv(output[0], sep='\t', header=True, index=True)
 
-rule summarize_mapping_star:
-    input:
-        lambda wildcards: expand('{output_dir}/mapping_star/{sample_id}/{map_step}/Log.final.out',
-            output_dir=output_dir, sample_id=sample_ids, map_step=star_map_steps)
-    output:
-        '{summary_dir}/all_bam_stats/mapping_stat.txt'
-    run:
-        import pandas as pd
+# rule summarize_mapping_star:
+#     input:
+#         lambda wildcards: expand('{output_dir}/mapping_star/{sample_id}/{map_step}/Log.final.out',
+#             output_dir=output_dir, sample_id=sample_ids, map_step=star_map_steps)
+#     output:
+#         '{summary_dir}/all_bam_stats/mapping_stat.txt'
+#     run:
+#         import pandas as pd
 
-        records = []
-        columns = ['sample_id', 'map_step']
-        for i, filename in enumerate(input):
-            map_step = filename.split('/')[-2]
-            sample_id = filename.split('/')[-3]
-            record = {'sample_id': sample_id, 'map_step': map_step}
-            with open(filename, 'r') as fin:
-                for line in fin:
-                    c = line.strip().split('|')
-                    if len(c) == 2:
-                        key, val = c[0].strip(), c[1].strip()
-                        record[key] = val
-                        if i == 0:
-                            columns.append(key)
-            records.append(record)
-        summary = pd.DataFrame.from_records(records)
-        summary = summary.reindex(columns=columns)
-        summary.set_index('sample_id', inplace=True)
-        summary.index.name = 'sample_id'
-        summary.to_csv(output[0], sep='\t', header=True, na_rep='NA', index=True)
+#         records = []
+#         columns = ['sample_id', 'map_step']
+#         for i, filename in enumerate(input):
+#             map_step = filename.split('/')[-2]
+#             sample_id = filename.split('/')[-3]
+#             record = {'sample_id': sample_id, 'map_step': map_step}
+#             with open(filename, 'r') as fin:
+#                 for line in fin:
+#                     c = line.strip().split('|')
+#                     if len(c) == 2:
+#                         key, val = c[0].strip(), c[1].strip()
+#                         record[key] = val
+#                         if i == 0:
+#                             columns.append(key)
+#             records.append(record)
+#         summary = pd.DataFrame.from_records(records)
+#         summary = summary.reindex(columns=columns)
+#         summary.set_index('sample_id', inplace=True)
+#         summary.index.name = 'sample_id'
+#         summary.to_csv(output[0], sep='\t', header=True, na_rep='NA', index=True)

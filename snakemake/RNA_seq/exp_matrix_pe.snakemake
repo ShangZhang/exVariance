@@ -54,7 +54,7 @@ def get_all_inputs(wildcards):
         read_length_hist            =expand('{summary_dir}/all_bam_stats/{sample_id}/read_length_hist/{map_step}',summary_dir=summary_dir,sample_id=sample_ids,map_step=map_steps),
         mapped_read_length_by_sample=expand('{summary_dir}/all_bam_stats/mapped_read_length_by_sample/{sample_id}',summary_dir=summary_dir,sample_id=sample_ids),
         mapped_insert_size_by_sample=expand('{summary_dir}/all_bam_stats/mapped_insert_size_by_sample/{sample_id}',summary_dir=summary_dir,sample_id=sample_ids),
-        mapping_stat                =expand('{summary_dir}/all_bam_stats/mapping_stat.txt',summary_dir=summary_dir),
+        # mapping_stat                =expand('{summary_dir}/all_bam_stats/mapping_stat.txt',summary_dir=summary_dir),
     )
 
     # bigwig_long.snakemake
