@@ -180,7 +180,7 @@ For additional help or support, please visit https://github.com/ShangZhang/exVar
 
 ### Documentation
 
-#### All of the content
+#### content
 
 <div align="center"><img alt="exVariance analysis" width="500" src="docs/imgs/ExVariance_analysis.svg"/></div>
 
@@ -200,7 +200,9 @@ For additional help or support, please visit https://github.com/ShangZhang/exVar
 
 5. [RNA-seq alternative polyadenylation analysis](docs/RNA-seq_APA.md)
 
-6. [RNA-seq alternative splicing analysis](docs/RNA-seq_SNP.md)
+6. [RNA-seq alternative splicing analysis](docs/RNA-seq_AS.md)
+
+7. [RNA-seq TCR analysis](docs/RNA-seq_TCR.md)
 
 ##### DNA-methylation realted analysis
 
