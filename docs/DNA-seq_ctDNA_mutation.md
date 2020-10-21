@@ -22,7 +22,7 @@ exVariance -u <USER_CONFIG_FILE> DNA_meth_Seal_seq
 
 ### Output and Summary
 
-<div align="center"><img alt="seal_methyl-cap_medip_pe" width="400" src="docs/imgs/rulegraph_DNA_meth_seal_methyl-cap_medip_pe.svg"/></div>
+<div align="center"><img alt="seal_methyl-cap_medip_pe" width="400" src="imgs/rulegraph_DNA_meth_seal_methyl-cap_medip_pe.svg"/></div>
 > **Note:**
 >
 > - `config/default_config.yaml`: the default configuration file. If you don't understand, don't change the content.

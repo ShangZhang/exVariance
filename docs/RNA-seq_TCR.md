@@ -27,7 +27,7 @@ exVariance -u <USER_CONFIG_FILE> RNA_seq_TCR
 
 ### Output and Summary
 
-<div align="center"><img alt="rulegraph_RNA_seq_SNP" width="100" src="docs/imgs/rulegraph_RNA_seq_TCR-seq.svg"/></div>
+<div align="center"><img alt="rulegraph_RNA_seq_SNP" width="100" src="imgs/rulegraph_RNA_seq_TCR-seq.svg"/></div>
 
 > **Note:**
 >

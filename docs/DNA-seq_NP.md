@@ -22,7 +22,7 @@ exVariance -u <USER_CONFIG_FILE> DNA_seq_NP
 
 ### Output and Summary
 
-<div align="center"><img alt="dna-seq_np_pe" width="400" src="docs/imgs/rulegraph_DNA_seq_np_pe.svg"/></div>
+<div align="center"><img alt="dna-seq_np_pe" width="400" src="imgs/rulegraph_DNA_seq_np_pe.svg"/></div>
 
 > **Note:**
 >

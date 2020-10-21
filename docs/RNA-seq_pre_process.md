@@ -27,8 +27,7 @@ exVariance -u <USER_CONFIG_FILE> RNA_seq_pre_process
 
 ### Output and Summary
 
-<div align="center"><img alt="exVariance RNA-seq output" width="600" src="docs/imgs/ExVariance_RNA_seq_output_summary.svg"/></div>
-
+<div align="center"><img alt="rulegraph_RNA_seq_pre_process_pe" width="300" src="imgs/rulegraph_RNA_seq_pre_process_pe.svg"/></div>
 
 > **Note:**
 >

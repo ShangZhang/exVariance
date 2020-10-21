@@ -22,7 +22,7 @@ exVariance -u <USER_CONFIG_FILE> DNA_meth_RRBS
 
 ### Output and Summary
 
-<div align="center"><img alt="wgbs_rrbs_pe" width="400" src="docs/imgs/rulegraph_DNA_meth_wgbs_rrbs_pe.svg"/></div>
+<div align="center"><img alt="wgbs_rrbs_pe" width="400" src="imgs/rulegraph_DNA_meth_wgbs_rrbs_pe.svg"/></div>
 
 > **Note:**
 >

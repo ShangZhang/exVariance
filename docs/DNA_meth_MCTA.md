@@ -22,7 +22,7 @@ exVariance -u <USER_CONFIG_FILE> DNA_meth_MCTA_seq
 
 ### Output and Summary
 
-<div align="center"><img alt="mcta_pe" width="300" src="docs/imgs/rulegraph_DNA_meth_mcta_pe.svg"/></div>
+<div align="center"><img alt="mcta_pe" width="300" src="imgs/rulegraph_DNA_meth_mcta_pe.svg"/></div>
 
 > **Note:**
 >
