@@ -48,7 +48,7 @@
 
 ### Manual
 
-##### RNA-seq realted analysis
+**RNA-seq realted analysis**
 
 - [RNA-seq pre process](docs/RNA-seq_pre_process.md)
 
@@ -66,7 +66,7 @@
 
 7. [RNA-seq TCR analysis](docs/RNA-seq_TCR.md)
 
-##### DNA-methylation realted analysis
+**DNA-methylation realted analysis**
 
 1. [DNA methylation analysis -- WGBS](docs/DNA_meth_WGBS.md)
 
@@ -80,7 +80,7 @@
 
 6. [DNA methylation analysis -- MCTA_seq](docs/DNA_meth_MCTA.md)
 
-##### DNA-seq realted analysis
+**DNA-seq realted analysis**
 
 1. [DNA-seq ctDNA call mutation](docs/DNA-seq_ctDNA_mutation.md)
 
@@ -151,14 +151,14 @@ Install the [github](https://github.com/ShangZhang/exVariance) source code and e
     git clone https://github.com/ShangZhang/exVariance.git
   ```
 
-##### Dependencies:
+**Dependencies:**
   1. [Anaconda3](https://www.anaconda.com)/[Miniconda3](http://conda.pydata.org/miniconda.html) conda version latter than 4.8.4
   2. [Python](https://www.python.org/) version latter than 3.8.3
   3. [Snakemake](https://snakemake.readthedocs.io) version=5.14.0
   4. [R](https://www.r-project.org/) version=3.6.3
   5. [R packages](https://www.r-project.org/)
       
-##### How to install all the dependencies:
+**How to install all the dependencies:**
 1. Install **Anaconda3/Minicodna3** and **Python**
     ```
     wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
@@ -178,7 +178,7 @@ Install the [github](https://github.com/ShangZhang/exVariance) source code and e
     ```
 3. Install **Snakemake 5.14.0** and **R 3.6.3**
     ```
-    mamba create -n exvariance4 -c conda-forge -c bioconda snakemake=5.14.0 r-base=3.6.3 -y
+    mamba create -n exvariance -c conda-forge -c bioconda snakemake=5.14.0 r-base=3.6.3 -y
     ```
 4. Install related **R packages**
     **Best Practice**
@@ -187,7 +187,7 @@ Install the [github](https://github.com/ShangZhang/exVariance) source code and e
     ```
     ```r
     ## continue to install other tools in R
-    conda activate exvariance4
+    conda activate exvariance
     R
     > library(usethis)
     > library(devtools)
@@ -195,7 +195,7 @@ Install the [github](https://github.com/ShangZhang/exVariance) source code and e
     ```
     **OR**
     ```R
-    conda activate exvariance4
+    conda activate exvariance
     R
     > library(usethis)
     > library(devtools)
@@ -239,9 +239,9 @@ To unzip these files: tar -xzf hg19.tar.gz OR tar -xzf mm9.tar.gz
 
 ## System Requirements:
 Some of the tools that exVariance uses, e.g. STAR is very memory intensive programs.  Therefore we recommend the following system requirements for exVariance:
-##### Minimal system requirements:
+**Minimal system requirements:**
 We recommend that you run exVariance on a server that has **at least 48GB of ram**.  This will allow for a single-threaded exVariance run (on human samples).
-##### Recommended system requirements:
+**Recommended system requirements:**
 We recommend that you have at least 64GB of ram and at least a 4-core CPU if you want to run exVariance in multi-threaded mode (which will speedup the workflow significantly).  
 Our own servers have 64GB of ram and 16 cores.
 
