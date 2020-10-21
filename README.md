@@ -174,20 +174,53 @@ optional arguments:
   --singularity-wrapper-dir SINGULARITY_WRAPPER_DIR
                         directory for singularity wrappers
 
-
-positional arguments:
-  { RNA_seq_pre_process,RNA_seq_exp_matrix,
-    RNA_seq_fusion_transcripts,RNA_seq_RNA_editing,
-    RNA_seq_SNP,RNA_seq_APA,RNA_seq_AS,
-    DNA_seq_ctDNA_mutation,DNA_seq_NP,
-    DNA_meth_WGBS,DNA_meth_RRBS,
-    DNA_meth_Seal_seq,DNA_meth_Methyl-cap_seq,
-    DNA_meth_MeDIP_seq,DNA_meth_MCTA_seq
-    }
-
 For additional help or support, please visit https://github.com/ShangZhang/exVariance
 
 ```
+
+### Documentation
+
+#### All of the content
+
+<div align="center"><img alt="exVariance analysis" width="500" src="docs/imgs/ExVariance_analysis.svg"/></div>
+
+#### Manual
+
+##### RNA-seq realted analysis
+
+- [RNA-seq pre process](docs/RNA-seq_pre_process.md)
+
+1. [RNA-seq call expression matrix](docs/RNA-seq_expression_matrix.md)
+
+2. [RNA-seq fusion transcripts analysis](docs/RNA-seq_fusion_transcripts.md)
+
+3. [RNA-seq RNA editing analysis](docs/RNA-seq_RNA_editings.md)
+
+4. [RNA-seq single nucleotide polymorphism analysis](docs/RNA-seq_SNP.md)
+
+5. [RNA-seq alternative polyadenylation analysis](docs/RNA-seq_APA.md)
+
+6. [RNA-seq alternative splicing analysis](docs/RNA-seq_SNP.md)
+
+##### DNA-methylation realted analysis
+
+1. [DNA methylation analysis -- WGBS](docs/DNA_meth_WGBS.md)
+
+2. [DNA methylation analysis -- RRBS](docs/DNA_meth_RRBS.md)
+
+3. [DNA methylation analysis -- Seal_seq](docs/DNA_meth_Seal.md)
+
+4. [DNA methylation analysis -- Methy-cap_seq](docs/DNA_meth_Methy.md)
+
+5. [DNA methylation analysis -- MeDIP_seq](docs/DNA_meth_MeDIP.md)
+
+6. [DNA methylation analysis -- MCTA_seq](docs/DNA_meth_MCTA.md)
+
+##### DNA-seq realted analysis
+
+1. [DNA-seq ctDNA call mutation](docs/DNA-seq_ctDNA_mutation.md)
+
+2. [DNA-seq nucleosome positioning analysis](docs/DNA-seq_NP.md)
 
 ### Input files
 
