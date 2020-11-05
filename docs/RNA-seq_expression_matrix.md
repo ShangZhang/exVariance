@@ -30,7 +30,7 @@ exVariance -u <USER_CONFIG_FILE> RNA_seq_exp_matrix
 
 including filter, imputation, normalization, batch removing
 
-<div align="center"><img alt="rulegraph_RNA_seq_exp_matrix_pe" width="800" src="imgs/rulegraph_RNA_seq_exp_matrix_pe.svg"/></div>
+<div align="center"><img alt="rulegraph_RNA_seq_exp_matrix_pe" width="800" src="imgs/exVariance_exp_matrix.png"/></div>
 
 
 > **Note:**

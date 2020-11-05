@@ -50,6 +50,8 @@
 
 **RNA-seq realted analysis**
 
+<div align="center"><img alt="exVariance analysis" width="500" src="docs/imgs/exVariance_RNAseq_pipeine.png"/></div>
+
 - [RNA-seq pre process](docs/RNA-seq_pre_process.md)
 
 1. [RNA-seq call expression matrix](docs/RNA-seq_expression_matrix.md)
