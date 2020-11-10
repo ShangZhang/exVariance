@@ -30,7 +30,7 @@ rule STAR_mapping:
     threads:
         config.get('threads_mapping')
     conda:
-        "envs/SNP.yaml"
+        "../envs/SNP.yaml"
     log:
         '{output_dir}/log/SNP/STAR_mapping/{sample_id}.log'
     shell:
@@ -56,7 +56,7 @@ rule mark_duplicates_and_sort:
     threads:
         config.get('threads_compress')
     conda:
-        "envs/SNP.yaml"
+        "../envs/SNP.yaml"
     log:
         "{output_dir}/log/SNP/mark_duplicates_and_sort/{sample_id}.log"
     shell:
@@ -88,7 +88,7 @@ rule split_N_cigar_reads:
     params:
         config.get("genome_dir") + '/fasta/genome.fa'
     conda:
-        "envs/SNP.yaml"
+        "../envs/SNP.yaml"
     log:
         "{output_dir}/log/SNP/split_N_cigar_reads/{sample_id}.log"
     shell:
@@ -109,7 +109,7 @@ rule add_read_group:
     params:
         "{output_dir}/SNP/6.SplitNCigarReads/{sample_id}.bai"
     conda:
-        "envs/SNP.yaml"
+        "../envs/SNP.yaml"
     log:
         "{output_dir}/log/SNP/add_read_group/{sample_id}.log"
     shell:
@@ -143,7 +143,7 @@ rule base_recalibrator:
     params:
         config.get("genome_dir") + '/fasta/genome.fa'
     conda:
-        "envs/SNP.yaml"
+        "../envs/SNP.yaml"
     log:
         "{output_dir}/log/SNP/base_recalibrator/{sample_id}.log"
     shell:
@@ -174,7 +174,7 @@ rule apply_BQSR:
     params:
         config.get("genome_dir") + '/fasta/genome.fa'
     conda:
-        "envs/SNP.yaml"
+        "../envs/SNP.yaml"
     log:
         "{output_dir}/log/SNP/apply_BQSR/{sample_id}.log"
     shell:
@@ -203,7 +203,7 @@ rule haplotype_caller:
     params:
         config.get("genome_dir") + '/fasta/genome.fa'
     conda:
-        "envs/SNP.yaml"
+        "../envs/SNP.yaml"
     log:
         "{output_dir}/log/SNP/haplotype_caller/{sample_id}.log"
     shell:
@@ -229,7 +229,7 @@ rule variant_filtration:
     params:
         config.get("genome_dir") + '/fasta/genome.fa'
     conda:
-        "envs/SNP.yaml"
+        "../envs/SNP.yaml"
     log:
         "{output_dir}/log/SNP/variant_filtration/{sample_id}.log"
     shell:
