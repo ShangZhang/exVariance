@@ -129,7 +129,7 @@ rule add_read_group:
 
 
 
-## Base Recalibration的作用是为了重新校正碱基质量值（BQSR），
+## Base Quality Recalibration的作用是为了重新校正碱基质量值（BQSR），
 ## 其通过机器学习方法构建了测序碱基错误率模型，根据模型对测序的碱基进行相应的调整。
 # GATK建议做，但是如果你的测序数据质量较好，其实做这步的话效果并不大，
 # 这步可选提供对应物种已知的snp和indel变异文件，如果没有的话，更降低了这一步做的必要性
@@ -161,7 +161,7 @@ rule base_recalibrator:
                     #  -known-sites {snp_dir}/1000GENOMES-phase_3.vcf.gz
 
 
-## 可选的 BQSR，
+## 可选的 BQSR，Base Quality Score Recalibration
 ## 这一步操作主要是针对测序质量不太好的数据，进行碱基质量再校准，
 ## 如果对自己的测序数据质量足够自信可以省略，2500 之后 Hiseq 仪器的数据质量都挺不错的，可以根据 FastQC 结果来决定。
 rule apply_BQSR:
@@ -193,6 +193,9 @@ rule apply_BQSR:
 
 ## 变异检测
 ## 忽略参数    -L ${interval_list} \
+
+# haplotype caller。1、寻找和参考基因组相比差别比较多的地方定义为突变活跃区域。2、对所有活跃区域局部重新组装。3、计算突变和小的indel。
+# 本过程因为涉及到重新比对，可能用的时间会比较长。
 rule haplotype_caller:
     input:
         input_bam = "{output_dir}/SNP/8.ApplyBQSR/{sample_id}.bam",
