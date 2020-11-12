@@ -27,7 +27,7 @@ exVariance -u <USER_CONFIG_FILE> RNA_seq_SNP
 
 ### Output and Summary
 
-<div align="center"><img alt="rulegraph_RNA_seq_SNP" style="width:400px;" src="imgs/exVarianceRNA_seq_SNP.png"/></div>
+<div align="center"><img alt="rulegraph_RNA_seq_SNP" style="width:500px;" src="imgs/exVarianceRNA_seq_SNP.png"/></div>
 
 
 > **Note:**

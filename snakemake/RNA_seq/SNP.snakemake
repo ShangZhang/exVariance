@@ -83,8 +83,8 @@ rule split_N_cigar_reads:
     output:
         "{output_dir}/SNP/6.SplitNCigarReads/{sample_id}.bam",
         "{output_dir}/SNP/6.SplitNCigarReads/{sample_id}.bai"
-    # threads:
-    #     config.get('threads_mapping')
+    threads:
+        config.get('threads_compress')
     params:
         config.get("genome_dir") + '/fasta/genome.fa'
     conda:
@@ -108,6 +108,8 @@ rule add_read_group:
         "{output_dir}/SNP/6.SplitNCigarReads_addRG/{sample_id}.bai"
     params:
         "{output_dir}/SNP/6.SplitNCigarReads/{sample_id}.bai"
+    threads:
+        config.get('threads_compress')
     conda:
         "../envs/SNP.yaml"
     log:
@@ -142,6 +144,8 @@ rule base_recalibrator:
         recalibration_report = "{output_dir}/SNP/7.BaseRecalibrator/{sample_id}_recalibration_report.table"
     params:
         config.get("genome_dir") + '/fasta/genome.fa'
+    threads:
+        config.get('threads_compress')
     conda:
         "../envs/SNP.yaml"
     log:
@@ -173,6 +177,8 @@ rule apply_BQSR:
         output_bam_index = "{output_dir}/SNP/8.ApplyBQSR/{sample_id}.bai"
     params:
         config.get("genome_dir") + '/fasta/genome.fa'
+    threads:
+        config.get('threads_compress')
     conda:
         "../envs/SNP.yaml"
     log:
@@ -205,6 +211,8 @@ rule haplotype_caller:
 	    output_vcf_tbi = "{output_dir}/SNP/9.HaplotypeCaller/{sample_id}.vcf.gz.tbi"
     params:
         config.get("genome_dir") + '/fasta/genome.fa'
+    threads:
+        config.get('threads_compress')
     conda:
         "../envs/SNP.yaml"
     log:
@@ -231,6 +239,8 @@ rule variant_filtration:
 	    output_vcf_tbi = "{output_dir}/SNP/10.VariantFiltration/{sample_id}.vcf.gz.tbi"
     params:
         config.get("genome_dir") + '/fasta/genome.fa'
+    threads:
+        config.get('threads_compress')
     conda:
         "../envs/SNP.yaml"
     log:
