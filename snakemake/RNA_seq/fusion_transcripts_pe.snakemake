@@ -21,7 +21,7 @@ rule fusion_transcripts:
     threads:
         config.get('threads_mapping')
     conda:
-        "envs/fusion_transcripts.yaml"
+        "../envs/fusion_transcripts.yaml"
     log:
         '{output_dir}/log/fusion_transcripts/{sample_id}.log'
     shell:

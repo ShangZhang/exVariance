@@ -1,0 +1,204 @@
+include: '../common.snakemake'
+
+output_dir = config.get("output_dir")
+summary_dir = config.get('summary_dir')
+
+def get_all_inputs(wildcards):
+    available_inputs = dict(
+        # output section
+        fastqc_raw_html=expand('{output_dir}/fastqc_raw/{sample_id}_{mate_index}_fastqc.html', output_dir=output_dir, sample_id=sample_ids, mate_index=[1, 2]),
+        fastqc_raw_zip=expand('{output_dir}/fastqc_raw/{sample_id}_{mate_index}_fastqc.zip', output_dir=output_dir, sample_id=sample_ids, mate_index=[1, 2]),
+        multiqc_raw_html=expand('{output_dir}/multiqc_raw/multiqc_report.html', output_dir=output_dir),
+        afterQC=expand('{output_dir}/afterQC/{sample_id}_{mate_index}.good.fq.gz',output_dir=output_dir, sample_id=sample_ids, mate_index=[1, 2]),
+        fastqc_clean_html=expand('{output_dir}/fastqc_clean/{sample_id}_{mate_index}.good_fastqc.html',output_dir=output_dir, sample_id=sample_ids, mate_index=[1, 2]),
+        fastqc_clean_zip=expand('{output_dir}/fastqc_clean/{sample_id}_{mate_index}.good_fastqc.zip',output_dir=output_dir, sample_id=sample_ids, mate_index=[1, 2]),
+        multiqc_clean_html=expand('{output_dir}/multiqc_clean/multiqc_report.html', output_dir=output_dir),
+        # summary section
+        summary_multiqc_raw_pe_html=expand('{summary_dir}/quality_control_raw/quality_control_raw.html',summary_dir=summary_dir),
+        summary_multiqc_raw_pe_txt=expand('{summary_dir}/quality_control_raw/quality_control_raw_stat.txt',summary_dir=summary_dir),
+        summary_multiqc_raw_general_stats=expand('{summary_dir}/fastq_raw_stat/fastq_raw_stat.txt',summary_dir=summary_dir),
+        summary_multiqc_clean_pe_html=expand('{summary_dir}/quality_control_clean/quality_control_clean.html',summary_dir=summary_dir),
+        summary_multiqc_clean_pe_txt=expand('{summary_dir}/quality_control_clean/quality_control_clean_stat.txt',summary_dir=summary_dir),
+        summary_multiqc_clean_general_stats=expand('{summary_dir}/fastq_clean_stat/fastq_clean_stat.txt',summary_dir=summary_dir),
+    )
+    enabled_inputs = list(available_inputs.keys())
+    inputs = []
+    for key, l in available_inputs.items():
+        if key in enabled_inputs:
+            inputs += l
+    return inputs
+
+rule all:
+    input:
+        get_all_inputs
+
+###------------------------The output section---------------------------###
+    
+rule fastqc_raw_pe:
+    input:
+        auto_gzip_input(config.get('data_dir') + '/fastq/{sample_id}_{mate_index}.fastq')
+    output:
+        html='{output_dir}/fastqc_raw/{sample_id}_{mate_index}_fastqc.html',
+        zip='{output_dir}/fastqc_raw/{sample_id}_{mate_index}_fastqc.zip'
+    params:
+        output_prefix='{output_dir}/fastqc_raw/',
+        # temp_dir=config['temp_dir']
+    wildcard_constraints:
+        mate_index='[12]'
+    threads:
+        1
+    conda:
+        "../envs/quality_control.yaml"
+    log:
+        '{output_dir}/log/quality_control/fastqc/{sample_id}_{mate_index}.log'
+    shell:
+        ''' fastqc -f fastq -o {params.output_prefix} {input} > {log} 2>&1
+        '''
+
+
+rule multiqc_raw_pe:
+    input:
+        fastqc=expand('{output_dir}/fastqc_raw/{sample_id}_{mate_index}_fastqc.zip',
+            output_dir=output_dir, sample_id=sample_ids, mate_index=[1, 2])
+    output:
+        multiqc_raw_pe_html='{output_dir}/multiqc_raw/multiqc_report.html',
+        multiqc_raw_general_stats='{output_dir}/multiqc_raw/multiqc_data/multiqc_general_stats.txt',
+        multiqc_raw_pe_txt='{output_dir}/multiqc_raw/multiqc_data/multiqc_fastqc.txt',
+    params:
+        fastqc_dir='{output_dir}/fastqc_raw',
+        multiqc_out_dir='{output_dir}/multiqc_raw'
+    wildcard_constraints:
+        mate_index='[12]'
+    threads:
+        1
+    conda:
+        "../envs/quality_control.yaml"
+    log:
+        '{output_dir}/log/quality_control/multiqc.log'
+    shell:
+        '''multiqc -f -m fastqc -o {params.multiqc_out_dir} {params.fastqc_dir} > {log} 2>&1
+        '''
+
+rule cutadapt_pe:
+    input:
+        fastq1=auto_gzip_input(config.get('data_dir') + '/fastq/{sample_id}_1.fastq'),
+        fastq2=auto_gzip_input(config.get('data_dir') + '/fastq/{sample_id}_2.fastq')
+    output:
+        fastq1='{output_dir}/cutadapt/{sample_id}_1.fastq.gz',
+        fastq2='{output_dir}/cutadapt/{sample_id}_2.fastq.gz'
+    params:
+        quality_5p=config['min_base_quality_5p'],
+        quality_3p=config['min_base_quality_3p'],
+        adaptor1=lambda wildcards: '-a ' + config['adaptor1'] if len(config['adaptor1']) > 0 else '',
+        adaptor2=lambda wildcards: '-A ' + config['adaptor2'] if len(config['adaptor2']) > 0 else '',
+        adaptor1_5p=lambda wildcards: '-g' + config['adaptor1_5p'] if len(config['adaptor1_5p']) > 0 else '',
+        adaptor2_5p=lambda wildcards: '-G' + config['adaptor2_5p'] if len(config['adaptor2_5p']) > 0 else '',
+        miniL=config['min_read_length'],
+        quality_base=config['quality_base']
+    threads: 
+        config.get('threads_compress')
+    conda:
+        "../envs/cutadapt.yaml"
+    log:
+        '{output_dir}/log/cutadapt/{sample_id}.log'
+    shell:
+        '''cutadapt --pair-filter any -j {threads} -q {params.quality_5p},{params.quality_3p} \
+                {params.adaptor1} \
+                {params.adaptor2} \
+                {params.adaptor1_5p} \
+                {params.adaptor2_5p} \
+            --trim-n -m {params.miniL} -o >(pigz -p {threads} -c > {output.fastq1}) -p >(pigz -p {threads} -c > {output.fastq2}) \
+            {input.fastq1} {input.fastq2} > {log} 2>&1
+        '''
+
+rule afterQC_pe:
+    input:
+        read1=auto_gzip_input('{output_dir}/cutadapt/{sample_id}_1.fastq.gz'),
+        read2=auto_gzip_input('{output_dir}/cutadapt/{sample_id}_2.fastq.gz')
+    output:
+        read1='{output_dir}/afterQC/{sample_id}_1.good.fq.gz',
+        read2='{output_dir}/afterQC/{sample_id}_2.good.fq.gz'
+    params:
+        out_file='{output_dir}/afterQC'
+    conda:
+        "../envs/ctdna.yaml"
+    log:
+        '{output_dir}/log/afterQC/{sample_id}.log'
+    shell:
+        '''after.py \
+            -1 {input.read1} -2 {input.read2} \
+            -g {params.out_file} \
+            -b {params.out_file} \
+            -r {params.out_file} > {log} 2>&1
+        '''
+
+rule fastqc_clean_pe:
+    input:
+        '{output_dir}/afterQC/{sample_id}_{mate_index}.good.fq.gz'
+    output:
+        html='{output_dir}/fastqc_clean/{sample_id}_{mate_index}.good_fastqc.html',
+        zip='{output_dir}/fastqc_clean/{sample_id}_{mate_index}.good_fastqc.zip'
+    params:
+        output_prefix='{output_dir}/fastqc_clean/',
+        temp_dir=config.get('temp_dir')
+    wildcard_constraints:
+        mate_index='[12]'
+    threads:
+        1
+    conda:
+        "../envs/quality_control.yaml"
+    log:
+        '{output_dir}/log/quality_control_clean/fastqc/{sample_id}_{mate_index}.log'
+    shell:
+        ''' fastqc -f fastq -o {params.output_prefix} {input} > {log} 2>&1
+        '''
+
+rule multiqc_clean_pe:
+    input:
+        fastqc=expand('{output_dir}/fastqc_clean/{sample_id}_{mate_index}.good_fastqc.zip',
+            output_dir=output_dir, sample_id=sample_ids, mate_index=[1, 2])
+    output:
+        multiqc_clean_pe_html='{output_dir}/multiqc_clean/multiqc_report.html',
+        multiqc_clean_general_stats='{output_dir}/multiqc_clean/multiqc_data/multiqc_general_stats.txt',
+        multiqc_clean_pe_txt='{output_dir}/multiqc_clean/multiqc_data/multiqc_fastqc.txt',
+    params:
+        fastqc_dir='{output_dir}/fastqc_clean',
+        multiqc_out_dir='{output_dir}/multiqc_clean/'
+    wildcard_constraints:
+        mate_index='[12]'
+    threads:
+        1
+    conda:
+        "../envs/quality_control.yaml"
+    log:
+        '{output_dir}/log/quality_control_clean/multiqc.log'
+    shell:
+        '''multiqc -f -m fastqc -o {params.multiqc_out_dir} {params.fastqc_dir} > {log} 2>&1
+        '''
+
+
+###------------------------The summary section---------------------------###
+
+rule summary_pre_process_pe:
+    input:
+        multiqc_raw_pe_html=expand('{output_dir}/multiqc_raw/multiqc_report.html',output_dir=output_dir),
+        multiqc_raw_pe_txt=expand('{output_dir}/multiqc_raw/multiqc_data/multiqc_fastqc.txt',output_dir=output_dir),
+        multiqc_raw_general_stats=expand('{output_dir}/multiqc_raw/multiqc_data/multiqc_general_stats.txt',output_dir=output_dir),
+        multiqc_clean_pe_html=expand('{output_dir}/multiqc_clean/multiqc_report.html',output_dir=output_dir),
+        multiqc_clean_pe_txt=expand('{output_dir}/multiqc_clean/multiqc_data/multiqc_fastqc.txt',output_dir=output_dir),
+        multiqc_clean_general_stats=expand('{output_dir}/multiqc_clean/multiqc_data/multiqc_general_stats.txt',output_dir=output_dir),
+    output:
+        summary_multiqc_raw_pe_html=expand('{summary_dir}/quality_control_raw/quality_control_raw.html',summary_dir=summary_dir),
+        summary_multiqc_raw_pe_txt=expand('{summary_dir}/quality_control_raw/quality_control_raw_stat.txt',summary_dir=summary_dir),
+        summary_multiqc_raw_general_stats=expand('{summary_dir}/fastq_raw_stat/fastq_raw_stat.txt',summary_dir=summary_dir),
+        summary_multiqc_clean_pe_html=expand('{summary_dir}/quality_control_clean/quality_control_clean.html',summary_dir=summary_dir),
+        summary_multiqc_clean_pe_txt=expand('{summary_dir}/quality_control_clean/quality_control_clean_stat.txt',summary_dir=summary_dir),
+        summary_multiqc_clean_general_stats=expand('{summary_dir}/fastq_clean_stat/fastq_clean_stat.txt',summary_dir=summary_dir),
+    shell:
+        ''' cp {input.multiqc_raw_pe_html} {output.summary_multiqc_raw_pe_html} ;
+            cp {input.multiqc_raw_pe_txt} {output.summary_multiqc_raw_pe_txt} ;
+            cp {input.multiqc_raw_general_stats} {output.summary_multiqc_raw_general_stats} ;
+            cp {input.multiqc_clean_pe_html} {output.summary_multiqc_clean_pe_html} ;
+            cp {input.multiqc_clean_pe_txt} {output.summary_multiqc_clean_pe_txt} ;
+            cp {input.multiqc_clean_general_stats} {output.summary_multiqc_clean_general_stats} ;
+        '''
