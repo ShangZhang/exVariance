@@ -18,7 +18,7 @@ rule get_fasta_file:
     threads:
         config.get('threads_compress')
     conda:
-        "envs/RNA_editing.yaml"
+        "../envs/RNA_editing.yaml"
     shell:
         '''pigz -p {threads} -c -d {input.left_fq} > {output.tmp_left_fq}; \
             pigz -p {threads} -c -d {input.right_fq} > {output.tmp_right_fq}; \
@@ -45,7 +45,7 @@ rule RNA_editing:
     threads:
         config.get('threads_mapping')
     conda:
-        "envs/RNA_editing.yaml"
+        "../envs/RNA_editing.yaml"
     log:
         '{output_dir}/log/RNA_editing/{sample_id}.log'
     shell:
